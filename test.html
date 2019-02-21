@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+       
+  </head>
+
+  <body>
+
+    
+
+    <script>
+ let rules = 
+ {
+ 	fullName : 
+ 	   {surname : true, 
+ 		firstName : true, 
+ 		middleName: false}
+ }
+
+ let localization = 
+ {
+ 	"fullName.surname": 'Прізвище',
+ 	"fullName.middleName": 'По-батькові' 	
+ }
+
+ let arrayfullName = 
+ [{
+   fullName: 
+   	{surname: 'xxx', 
+     firstName: 'yyy', 
+     middleName: 'zzz'}
+    }, 
+  {fullName: 
+   	{surname: 'XXX', 
+   	 firstName: true, 
+   	 middleName: 'ZZZ'}
+    },
+  {fullName: 
+   	{surname: true, 
+   	 firstName: 'Ypp', 
+   	 middleName: 'vde'}
+    }
+ ];
+
+ function myArrAll (arr){
+ 	let arrAll = arr.map(value => {
+   	  return Object.entries(value.fullName); 	   
+    })
+ 	return arrAll;
+   
+ }
+
+ function takeObjectForReduce(arr) {
+     let takeObject = arr.reduce((result, item) => {
+        const [key, value] = item;
+        result[key] = value;
+  
+        return result;
+     }, {});
+  return takeObject;
+  }
+
+ function  myFuncionTakeNameValue () {
+  let arrRules = Object.keys(rules.fullName);
+
+  let arrSurKey = [];
+   console.log(arrSurKey)
+  let dopArrSurKey =[];
+  let valuePlusFirst = 0;  
+
+  
+  let addArrLocKeysSur = Object.keys(localization).forEach(value => {
+ 	 if (value === "fullName.surname") {
+ 	  dopArrSurKey.splice(0, 0, 'name', localization[value]);
+ 	  arrSurKey.push(dopArrSurKey); 
+     }  else {
+	   dopArrSurKey.push('name', arrRules[0]);
+	   arrSurKey.push(dopArrSurKey);
+     } 
+   }) 
+
+  let arrFirstKey = [];
+  let dopArrFirstKey = [];
+    
+  let addArrLocKeysFirst = Object.keys(localization).forEach(value => {
+ 	 if (value === "fullName.firstName") {
+ 	   dopArrFirstKey.splice(0, 4, 'name', localization[value]);
+	   arrFirstKey.push(dopArrFirstKey);
+     }  else {
+	   dopArrFirstKey.push('name', arrRules[1]);
+	   arrFirstKey.push(dopArrFirstKey);
+     }
+  })
+
+  let valuePlusSecond = 0;
+ 
+  myArrAll(arrayfullName).forEach(value => {
+   if (rules.fullName.surname || rules.fullName.firstName) 
+  	 {
+        valuePlusFirst++
+  	 	value[0][0] = 'value' + valuePlusFirst;
+  	 	if (typeof value[0][1] === "boolean") {
+            value[0][1] = 'Так/Ні';
+  	    }
+   		arrSurKey.push(value[0]);
+
+ 	    valuePlusSecond++ 
+ 		if (value[1][0] && rules.fullName.firstName) {
+ 		 	value[1][0] = 'value' + valuePlusSecond;
+ 		 	if (typeof value[1][1] === "boolean") {
+                value[1][1] = 'Так/Ні';
+  	        } 
+ 		 	arrFirstKey.push(value[1]);
+ 		}		 
+ 	  } 	
+  })
+
+  let finishResult = [];
+  finishResult.push(takeObjectForReduce(arrSurKey), takeObjectForReduce(arrFirstKey));
+  console.log(finishResult);
+}
+
+myFuncionTakeNameValue();
+
+    </script>
+  </body>
+</html>

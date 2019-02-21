@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+       
+  </head>
+
+  <body>
+
+    
+
+    <script>
+ let rules = 
+ {
+  fullName : 
+     {surname : true, 
+      firstName : true, 
+      middleName: false,
+      ext : {data: true}},
+  age: true
+ }
+
+ let localization = 
+ {
+  "fullName.surname": 'Прізвище',
+  "fullName.middleName": 'По-батькові'  
+ }
+
+ let arrayfullName = 
+ [{
+   fullName: 
+    {surname: 'xxx', 
+     firstName: 'yyy', 
+     middleName: 'zzz',
+   ext:{data:"true"}}
+    }, 
+  {fullName: 
+    {surname: 'XXX', 
+     firstName: 'YYY', 
+     middleName: 'ZZZ',
+    ext:{data: new Date(2011, 0, 1)}}
+    },
+  {fullName: 
+    {surname: 'ppp', 
+     firstName: 'ooo', 
+     middleName: 'ddd',
+     ext:{data: true}},
+  age: 22
+    }
+ ];
+
+let finishArrayfullName = [];
+console.log(finishArrayfullName);
+arrayProcessingFucn(arrayfullName, 'data', rules); // init main function;
+arrayProcessingFucn(arrayfullName, 'age', rules);  // init main function;
+arrayProcessingFucn(arrayfullName, 'surname', rules);  // init main function;
+
+function arrayProcessingFucn(objFull, key, rulesArr) {
+
+let arrKeyValueNumber = [];
+let count = 0;
+let point = [];
+let arrLocKey = Object.keys(localization);
+
+function returnTrueFalse(obj, label) {
+  for(let elements in obj){
+      if (elements === label){
+          point.push(obj[elements]);
+      }
+      if(typeof obj[elements] === 'object'){
+        returnTrueFalse(obj[elements], label);   
+      }    
+  }
+}
+
+let includesFalse = [];
+arrLocKey.forEach(value => {
+       value.split('.').forEach(index => {
+        includesFalse.push(index)
+         if (index === key) {
+           for (keyLoc in localization) {
+             if (keyLoc === value) {
+               arrKeyValueNumber.unshift(['name', localization[value]])
+            } 
+           } 
+         } 
+       })
+   });
+if (includesFalse.includes(key)  === false 
+  && arrKeyValueNumber.includes('name') === false) 
+{
+      arrKeyValueNumber.unshift(['name', key]);
+}
+
+returnTrueFalse(rulesArr, key);  //check rules;
+findObjectByLabel(objFull, key);  //check key/value;
+
+finishArrayfullName.push(getObjectForReduce(arrKeyValueNumber));
+
+function findObjectByLabel(obj, label) { 
+  if (point[0]) {
+   for(let elements in obj){
+           if (elements === label){
+                count++;
+                let point = label;
+                point = `value ${count}`;
+                if (typeof obj[elements] === "boolean") {
+                  let pointBooleanElem = obj[elements];
+                  pointBooleanElem = `Так/Ні`;
+                  arrKeyValueNumber.push([point, pointBooleanElem]);
+                } else if ( obj[elements] instanceof Date) {
+                     let pointDateElement = obj[elements];
+                     pointDateElement = `${obj[elements].getDate()}.${obj[elements].getMonth() + 1}.${obj[elements].getFullYear()}`;
+                     arrKeyValueNumber.push([point, pointDateElement]);
+                   }
+                    else {
+                    arrKeyValueNumber.push([point, obj[elements]]);
+                    }
+           }
+
+           if(typeof obj[elements] === 'object'){
+            findObjectByLabel(obj[elements], label);
+           } 
+        }
+    }   
+  }
+} 
+
+function getObjectForReduce(arr) {
+     let takeObject = arr.reduce((result, item) => {
+        const [key, value] = item;
+        result[key] = value;
+  
+        return result;
+     }, {});
+  return takeObject;
+};
+    </script>
+ 
+  </body>
+</html>

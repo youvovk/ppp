@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+       
+  </head>
+
+  <body>
+
+    
+
+    <script>
+ let rules = 
+ {
+  fullName : 
+     {surname : true, 
+      firstName : true, 
+      middleName: false,
+      ext : {data: true}},
+  
+ }
+
+ let localization = 
+ {
+  "fullName.surname": 'Прізвище',
+  "fullName.middleName": 'По-батькові'  
+ }
+
+ let arrayfullName = 
+ [{
+   fullName: 
+    {surname: 'xxx', 
+     firstName: 'yyy', 
+     middleName: 'zzz',
+   ext:{data:"true"}}
+    }, 
+  {fullName: 
+    {surname: 'XXX', 
+     firstName: 'YYY', 
+     middleName: 'ZZZ',
+    ext:{data:"true"}}
+    },
+  {fullName: 
+    {surname: 'ppp', 
+     firstName: 'ooo', 
+     middleName: 'ddd',
+     ext:{data:"true"}},
+  age: 22
+    }
+ ];
+
+let arrFinish = [];  
+
+function findObjectByLabel(obj, label) {
+       for(let elements in obj){
+           if (elements === label){
+                console.log(obj[elements]);
+           }
+            if(typeof obj[elements] === 'object'){
+            findObjectByLabel(obj[elements], 'ext');
+           }
+          
+       }
+};
+
+ findObjectByLabel(arrayfullName, 'ext');
+
+ function getObjectForReduce(arr) {
+     let takeObject = arr.reduce((result, item) => {
+        const [key, value] = item;
+        result[key] = value;
+  
+        return result;
+     }, {});
+  return takeObject;
+  }
+
+
+ function  myFuncionTakeNameValue (arr, rulesKey) {
+  let arrLocalization = Object.entries(localization);
+  let arrRulesKey = Object.keys(rules);
+
+  let arrRules = [];
+      Object.entries(rules).forEach( index => {
+          Object.entries(index[1]).forEach( bottom => {
+             arrRules.push(bottom);
+          });
+      })
+
+  let arrOneRule
+  arrRules.forEach(value => {
+    if (value[0] === rulesKey && value[1]) {
+      arrOneRule = true;
+    } 
+  })  
+
+  let sliceArrAll = [] 
+  arr.forEach(value => {
+      Object.entries(value).forEach( index => {
+          Object.entries(index[1]).forEach( bottom => {
+             sliceArrAll.push(bottom);
+          });
+      })
+  })  
+  
+  let arrOneKeyValues = [];
+  let count = 0;
+  let toString = {}.toString;
+    if (arrOneRule) {        
+        sliceArrAll.forEach(value => {
+          if (value[0] === rulesKey) {
+            arrOneKeyValues.push(value);
+          }            
+        })   
+      }   
+  arrOneKeyValues.forEach(value => {
+     if (typeof value[1] === "boolean") {
+        let booleanChange = value[1];
+        booleanChange = 'Так/Ні';
+        value.splice(1, 1, booleanChange)
+     } else if (value[1] instanceof Date) {
+        let dateChange = value[1];
+        dateChange = `${value[1].getDate()}.${value[1].getMonth() + 1}.${value[1].getFullYear()}`;
+        value.splice(1, 1, dateChange)
+     }
+     count++
+     let point = value[0];
+     point = "value" + count;
+     value.splice(0, 1, point);
+  })    
+
+  let lastLocal = arrRulesKey[0] + "."+ rulesKey;
+
+  arrLocalization.forEach(value => {
+    if (value[0] === lastLocal) {
+      arrOneKeyValues.unshift(['name', value[1]])
+    } else {
+      arrOneKeyValues.unshift(['name', rulesKey])
+    }
+  })
+
+  arrFinish.push(getObjectForReduce(arrOneKeyValues)); 
+}
+
+//myFuncionTakeNameValue (arrayfullName, "surname");
+//myFuncionTakeNameValue (arrayfullName, "firstName");
+myFuncionTakeNameValue (arrayfullName, "age");
+console.log(arrFinish);
+    </script>
+  </body>
+</html>
